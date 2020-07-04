@@ -8,8 +8,7 @@ class ReactiveOwner:
         self._on_changes = []
 
     def on_change(self, func: Callable[..., None], *args):
-        self._on_changes.append(
-            (func, [object.__getattribute__(self, arg.name) for arg in args]))
+        self._on_changes.append((func, [object.__getattribute__(self, arg.name) for arg in args]))
 
     def __getattribute__(self, name: str):
         obj = object.__getattribute__(self, name)
@@ -32,7 +31,7 @@ class ReactiveOwner:
 
                     if isinstance(obj, ReactiveProperty):
                         for change in self._on_changes:
-                            if obj in change[1] and prev != obj:
+                            if prev != obj and (obj in change[1] or not change[1]):
                                 func = change[0]
                                 if func in funccalls:
                                     funccalls[func] = funccalls[func] + [obj]
@@ -58,7 +57,7 @@ class ReactiveOwner:
 
                 if isinstance(obj, ReactiveProperty):
                     for change in self._on_changes:
-                        if obj in change[1] and prev != obj.value:
+                        if prev != obj and (obj in change[1] or not change[1]):
                             change[0](*[obj])
             else:
                 object.__setattr__(self, name, value)
