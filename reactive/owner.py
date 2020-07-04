@@ -27,11 +27,12 @@ class ReactiveOwner:
                 object.__setattr__(self, arg["name"], arg["value"])
             else:
                 if hasattr(obj, '__set__'):
+                    prev = obj
                     obj.__set__(self, arg["value"])
 
                     if isinstance(obj, ReactiveProperty):
                         for change in self._on_changes:
-                            if obj in change[1]:
+                            if obj in change[1] and prev != obj:
                                 func = change[0]
                                 if func in funccalls:
                                     funccalls[func] = funccalls[func] + [obj]
@@ -52,11 +53,12 @@ class ReactiveOwner:
                 value.__set_name__(self, name)
         else:
             if hasattr(obj, '__set__'):
+                prev = obj.value
                 obj.__set__(self, value)
 
                 if isinstance(obj, ReactiveProperty):
                     for change in self._on_changes:
-                        if obj in change[1]:
+                        if obj in change[1] and prev != obj.value:
                             change[0](*[obj])
             else:
                 object.__setattr__(self, name, value)

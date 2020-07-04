@@ -16,9 +16,10 @@ class ReactiveProperty:
         return ObservableProperty(self.value)
 
     def __set__(self, instance: Any, value: Any):
+        prev = self.value
         self.value = value
-        if self._on_change:
-            self._on_change(self.value, self.history[len(self.history) - 2])
+        if self._on_change and value != prev:
+            self._on_change(self.value, prev)
 
     def __delete__(self, instance: Any):
         del self.value
