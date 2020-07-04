@@ -14,14 +14,15 @@ class TestReactive:
         update_name_joined_called = False
         update_age_joined_called = False
 
-        def call_update_joined(val: Any):
+        def call_update_joined(*args):
             nonlocal update_name_joined_called
             nonlocal update_age_joined_called
 
-            if val.name == "name":
-                update_name_joined_called = True
-            elif val.name == "age":
-                update_age_joined_called = True
+            for val in args:
+                if val.name == "name":
+                    update_name_joined_called = True
+                elif val.name == "age":
+                    update_age_joined_called = True
 
         foo = Foo()
 
@@ -52,3 +53,21 @@ class TestReactive:
         foo.name = "Bar"
 
         assert update_name_unique_called
+
+    def test_bulk_update(self):
+        class Foo(ReactiveOwner):
+            def __init__(self):
+                super().__init__()
+                self.name = ReactiveProperty("Foo")
+                self.age = ReactiveProperty(6)
+
+        foo = Foo()
+
+        def call_update_joined(*args):
+            names = [arg.name for arg in args]
+            assert ["name", "age"] == names
+
+        foo.on_update(call_update_joined, foo.name, foo.age)
+
+        foo._bulk_update({"name": "name", "value": "Bar"},
+                         {"name": "age", "value": 12})
