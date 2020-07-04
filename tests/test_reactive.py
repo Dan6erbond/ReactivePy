@@ -10,12 +10,14 @@ class TestReactive:
                 super().__init__()
                 self.name = ReactiveProperty("Foo")
                 self.age = ReactiveProperty(6)
-                self.is_reactive = ReactiveProperty(True)
 
         update_name_joined_called = False
         update_age_joined_called = False
 
         def call_update_joined(val: Any):
+            nonlocal update_name_joined_called
+            nonlocal update_age_joined_called
+
             if val.name == "name":
                 update_name_joined_called = True
             elif val.name == "age":
@@ -36,12 +38,11 @@ class TestReactive:
             def __init__(self):
                 super().__init__()
                 self.name = ReactiveProperty("Foo")
-                self.age = ReactiveProperty(6)
-                self.is_reactive = ReactiveProperty(True)
 
         update_name_unique_called = False
 
         def call_update_name(curr: Any, old: Any):
+            nonlocal update_name_unique_called
             update_name_unique_called = True
 
         foo = Foo()
