@@ -39,6 +39,28 @@ class TestReactive:
         assert change_name_joined_called == 1
         assert change_age_joined_called == 1
 
+    def test_change_any(self):
+        class Foo(ReactiveOwner):
+            def __init__(self):
+                super().__init__()
+                self.name = ReactiveProperty("Foo")
+                self.age = ReactiveProperty(6)
+
+        change_any_called = 0
+
+        def call_change_any(*args):
+            nonlocal change_any_called
+            change_any_called += 1
+
+        foo = Foo()
+
+        foo.on_change(call_change_any)
+
+        foo.name = "Bar"
+        foo.age = 12
+
+        assert change_any_called == 2
+
     def test_change_unique(self):
         class Foo(ReactiveOwner):
             def __init__(self):
