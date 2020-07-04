@@ -17,14 +17,14 @@ class Foo(ReactiveOwner):
 
 foo = Foo()
 
-def on_update(*args):
+def on_change(*args):
     for arg in args: print(arg.name, "updated to", arg)
 
-def on_name_update(curr: Any, org: Any):
+def on_name_change(curr: Any, org: Any):
     print("Name updated from", org, "to", curr)
 
-foo.on_update(on_update, foo.name, foo.age)
-foo.name.on_update(on_name_update)
+foo.on_change(on_update, foo.name, foo.age)
+foo.name.on_change(on_name_update)
 
 foo._bulk_update({"name": "name", "value": "Bar"},
                   {"name": "age", "value": 12})
