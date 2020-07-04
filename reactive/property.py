@@ -2,9 +2,9 @@ from typing import Any, Callable
 
 
 class ReactiveProperty:
-    def __init__(self, value: Any):
+    def __init__(self, value: Any, name: str = None):
         self.value = value
-        self.name = None
+        self.name = name
         self.history = [value]
         self._on_update = None
 
