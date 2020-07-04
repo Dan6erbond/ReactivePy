@@ -18,8 +18,6 @@ class TestReactive:
             nonlocal change_name_joined_called
             nonlocal change_age_joined_called
 
-            print(args)
-
             for val in args:
                 if val.name == "name":
                     change_name_joined_called += 1

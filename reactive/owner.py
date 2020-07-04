@@ -5,10 +5,10 @@ from .property import ReactiveProperty
 
 class ReactiveOwner:
     def __init__(self):
-        self._on_changes = []
+        self._on_change_handlers = []
 
     def on_change(self, func: Callable[..., None], *args):
-        self._on_changes.append((func, [object.__getattribute__(self, arg.name) for arg in args]))
+        self._on_change_handlers.append((func, [object.__getattribute__(self, arg.name) for arg in args]))
 
     def __getattribute__(self, name: str):
         obj = object.__getattribute__(self, name)
@@ -26,13 +26,14 @@ class ReactiveOwner:
                 object.__setattr__(self, arg["name"], arg["value"])
             else:
                 if hasattr(obj, '__set__'):
-                    prev = obj
+                    if isinstance(obj, ReactiveProperty):
+                        prev_value = obj.value
                     obj.__set__(self, arg["value"])
 
                     if isinstance(obj, ReactiveProperty):
-                        for change in self._on_changes:
-                            if prev != obj and (obj in change[1] or not change[1]):
-                                func = change[0]
+                        for change_handler in self._on_change_handlers:
+                            if prev_value != obj.value and (obj in change_handler[1] or not change_handler[1]):
+                                func = change_handler[0]
                                 if func in funccalls:
                                     funccalls[func] = funccalls[func] + [obj]
                                 else:
@@ -52,12 +53,13 @@ class ReactiveOwner:
                 value.__set_name__(self, name)
         else:
             if hasattr(obj, '__set__'):
-                prev = obj.value
+                if isinstance(obj, ReactiveProperty):
+                    prev_value = obj.value
                 obj.__set__(self, value)
 
                 if isinstance(obj, ReactiveProperty):
-                    for change in self._on_changes:
-                        if prev != obj and (obj in change[1] or not change[1]):
-                            change[0](*[obj])
+                    for change_handler in self._on_change_handlers:
+                        if prev_value != obj.value and (obj in change_handler[1] or not change_handler[1]):
+                            change_handler[0](*[obj])
             else:
                 object.__setattr__(self, name, value)
