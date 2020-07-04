@@ -11,18 +11,20 @@ class TestReactive:
                 self.name = ReactiveProperty("Foo")
                 self.age = ReactiveProperty(6)
 
-        change_name_joined_called = False
-        change_age_joined_called = False
+        change_name_joined_called = 0
+        change_age_joined_called = 0
 
         def call_change_joined(*args):
             nonlocal change_name_joined_called
             nonlocal change_age_joined_called
 
+            print(args)
+
             for val in args:
                 if val.name == "name":
-                    change_name_joined_called = True
+                    change_name_joined_called += 1
                 elif val.name == "age":
-                    change_age_joined_called = True
+                    change_age_joined_called += 1
 
         foo = Foo()
 
@@ -31,8 +33,11 @@ class TestReactive:
         foo.name = "Bar"
         foo.age = 12
 
-        assert change_name_joined_called
-        assert change_age_joined_called
+        foo.name = "Bar"
+        foo.age = 12
+
+        assert change_name_joined_called == 1
+        assert change_age_joined_called == 1
 
     def test_change_unique(self):
         class Foo(ReactiveOwner):
@@ -40,20 +45,20 @@ class TestReactive:
                 super().__init__()
                 self.name = ReactiveProperty("Foo")
 
-        change_name_unique_called = False
+        change_name_unique_called = 0
 
-        def call_change_name(curr: Any, old: Any):
+        def call_change_name(curr: Any, prev: Any):
             nonlocal change_name_unique_called
-            print(curr)
-            change_name_unique_called = True
+            change_name_unique_called += 1
 
         foo = Foo()
 
         foo.name.on_change(call_change_name)
 
         foo.name = "Bar"
+        foo.name = "Bar"
 
-        assert change_name_unique_called
+        assert change_name_unique_called == 1
 
     def test_bulk_update(self):
         class Foo(ReactiveOwner):
