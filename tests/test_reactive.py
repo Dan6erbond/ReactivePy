@@ -87,13 +87,40 @@ class TestReactive:
                 self.name = ReactiveProperty("Foo")
                 self.age = ReactiveProperty(6)
 
-        foo = Foo()
-
         def call_change_joined(*args):
             names = [arg.name for arg in args]
             assert ["name", "age"] == names
+
+        foo = Foo()
 
         foo.on_change(call_change_joined, foo.name, foo.age)
 
         foo._bulk_update({"name": "name", "value": "Bar"},
                          {"name": "age", "value": 12})
+
+    def test_multiple_property_change_handlers(self):
+        class Foo(ReactiveOwner):
+            def __init__(self):
+                super().__init__()
+                self.name = ReactiveProperty("Foo")
+
+        change_handler_1_calls = 0
+        change_handler_2_calls = 0
+
+        def change_handler_1(curr: Any, prev: Any):
+            nonlocal change_handler_1_calls
+            change_handler_1_calls += 1
+
+        def change_handler_2(curr: Any, prev: Any):
+            nonlocal change_handler_2_calls
+            change_handler_2_calls += 1
+
+        foo = Foo()
+
+        foo.name.on_change(change_handler_1)
+        foo.name.on_change(change_handler_2)
+
+        foo.name = "Bar"
+
+        assert change_handler_1_calls == 1
+        assert change_handler_2_calls == 1
