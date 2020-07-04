@@ -5,10 +5,10 @@ from .property import ReactiveProperty
 
 class ReactiveOwner:
     def __init__(self):
-        self._on_updates = []
+        self._on_changes = []
 
-    def on_update(self, func: Callable[..., None], *args):
-        self._on_updates.append(
+    def on_change(self, func: Callable[..., None], *args):
+        self._on_changes.append(
             (func, [object.__getattribute__(self, arg.name) for arg in args]))
 
     def __getattribute__(self, name: str):
@@ -30,9 +30,9 @@ class ReactiveOwner:
                     obj.__set__(self, arg["value"])
 
                     if isinstance(obj, ReactiveProperty):
-                        for update in self._on_updates:
-                            if obj in update[1]:
-                                func = update[0]
+                        for change in self._on_changes:
+                            if obj in change[1]:
+                                func = change[0]
                                 if func in funccalls:
                                     funccalls[func] = funccalls[func] + [obj]
                                 else:
@@ -55,8 +55,8 @@ class ReactiveOwner:
                 obj.__set__(self, value)
 
                 if isinstance(obj, ReactiveProperty):
-                    for update in self._on_updates:
-                        if obj in update[1]:
-                            update[0](*[obj])
+                    for change in self._on_changes:
+                        if obj in change[1]:
+                            change[0](*[obj])
             else:
                 object.__setattr__(self, name, value)
