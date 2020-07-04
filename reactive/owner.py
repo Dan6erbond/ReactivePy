@@ -22,15 +22,13 @@ class ReactiveOwner:
             obj = object.__getattribute__(self, name)
         except AttributeError:
             object.__setattr__(self, name, value)
+            if hasattr(value, '__set_name__'):
+                value.__set_name__(self, name)
         else:
             if hasattr(obj, '__set__'):
-                print(True)
                 obj.__set__(self, value)
-                obj.__set_name__(self, name)
-                print(obj)
 
                 if isinstance(obj, ReactiveProperty):
-                    print(True)
                     for update in self._on_updates:
                         if obj in update[1]:
                             update[0](obj)
