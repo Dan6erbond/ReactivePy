@@ -16,7 +16,7 @@ class TestReactive(TestCase):
         self.test_class = TestClass()
         self.test_class_2 = TestClass()
 
-    def test_change_joined(self):
+    def test_1_change_joined(self):
         change_name_joined_called = 0
         change_age_joined_called = 0
 
@@ -41,7 +41,7 @@ class TestReactive(TestCase):
         self.assertEqual(change_name_joined_called, 1)
         self.assertEqual(change_age_joined_called, 1)
 
-    def test_change_any(self):
+    def test_2_change_any(self):
         change_any_called = 0
 
         def call_change_any(*args):
@@ -55,7 +55,7 @@ class TestReactive(TestCase):
 
         self.assertEqual(change_any_called, 2)
 
-    def test_change_unique(self):
+    def test_3_change_unique(self):
         change_name_unique_called = 0
 
         def call_change_name(curr: Any, prev: Any):
@@ -69,7 +69,7 @@ class TestReactive(TestCase):
 
         self.assertEqual(change_name_unique_called, 1)
 
-    def test_bulk_update(self):
+    def test_4_bulk_update(self):
         def call_change_joined(*args):
             names = [arg.name for arg in args]
             self.assertListEqual(["name", "age"], names)
@@ -79,7 +79,7 @@ class TestReactive(TestCase):
         self.test_class._bulk_update({"name": "name", "value": "Bar"},
                                      {"name": "age", "value": 12})
 
-    def test_multiple_property_change_handlers(self):
+    def test_5_multiple_property_change_handlers(self):
         change_handler_1_calls = 0
         change_handler_2_calls = 0
 
