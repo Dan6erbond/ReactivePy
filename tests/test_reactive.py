@@ -113,6 +113,10 @@ class TestReactive(TestCase):
         with self.assertRaises(TypeError, msg=msg):
             self.test_class.attribute = 12
 
+    def test_8_setattr(self):
+        setattr(self.test_class, "attribute", ReactiveProperty("Foo"))
+        self.assertEqual(self.test_class.attribute, "Foo")
+
 
 if __name__ == '__main__':
     unittest.main()
