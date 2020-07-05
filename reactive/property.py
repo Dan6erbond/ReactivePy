@@ -1,11 +1,12 @@
-from typing import Any, Callable
+from typing import Any, Callable, Type
 
 
 class ReactiveProperty:
-    def __init__(self, value: Any, name: str = None):
+    def __init__(self, value: Any, name: str = None, field_type: Type[Any] = None):
         self.value = value
         self.name = name
         self.history = [value]
+        self._field_type = field_type
         self._on_change_handlers = []
 
     def __get__(self, instance: Any, owner: Any):
@@ -17,8 +18,13 @@ class ReactiveProperty:
         return ObservableProperty(self.value)
 
     def __set__(self, instance: Any, value: Any):
+        if self._field_type and not isinstance(value, self._field_type):
+            raise TypeError(
+                f"expected an instance of type '{self._field_type.__name__}' for attribute '{self.name}', got '{type(value).__name__}' instead")
+
         prev = self.value
         self.value = value
+
         if value != prev:
             for change_handler in self._on_change_handlers:
                 change_handler(self.value, prev)
