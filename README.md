@@ -38,3 +38,21 @@ class Foo(ReactiveOwner):
         super().__init__()
         self.name = ReactiveProperty("Foo", field_type=str)
 ```
+
+### `all_reactive` decorator
+
+The `ReactiveOwner.all_reactive` owner can be used on classes, where all public attributes should be reactive, which will additionally override the `__setattr__` method to convert any attribute writes.
+
+Classes using the `ReactiveOwner.all_reactive` decorator do not need to inherit from `ReactiveOwner`:
+
+```python
+@ReactiveOwner.all_reactive
+class Foo:
+    def __init__(self):
+        super().__init__()
+        self.name = ReactiveProperty("Foo", field_type=str)
+```
+
+## Known Issues
+
+ - `class ReactiveProperty` does not work for type `bool` and `NoneType`.
