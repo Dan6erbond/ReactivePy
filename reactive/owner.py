@@ -24,6 +24,8 @@ class ReactiveOwner:
                 obj = object.__getattribute__(self, arg["name"])
             except AttributeError:
                 object.__setattr__(self, arg["name"], arg["value"])
+                if hasattr(arg["value"], '__set_name__'):
+                    arg["value"].__set_name__(self, arg["name"])
             else:
                 if hasattr(obj, '__set__'):
                     if isinstance(obj, ReactiveProperty):
@@ -45,21 +47,4 @@ class ReactiveOwner:
             func(*funccalls[func])
 
     def __setattr__(self, name: str, value: Any):
-        try:
-            obj = object.__getattribute__(self, name)
-        except AttributeError:
-            object.__setattr__(self, name, value)
-            if hasattr(value, '__set_name__'):
-                value.__set_name__(self, name)
-        else:
-            if hasattr(obj, '__set__'):
-                if isinstance(obj, ReactiveProperty):
-                    prev_value = obj.value
-                obj.__set__(self, value)
-
-                if isinstance(obj, ReactiveProperty):
-                    for change_handler in self._on_change_handlers:
-                        if prev_value != obj.value and (obj in change_handler[1] or not change_handler[1]):
-                            change_handler[0](*[obj])
-            else:
-                object.__setattr__(self, name, value)
+        self._bulk_update({"name": name, "value": value})
