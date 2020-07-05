@@ -7,6 +7,19 @@ class ReactiveOwner:
     def __init__(self):
         self._on_change_handlers = []
 
+    @classmethod
+    def all_reactive(cls, org_cls):
+        class AllReactive(org_cls, ReactiveOwner):
+            def __init__(self):
+                super().__init__()
+
+            def __setattr__(self, name: str, value: Any):
+                if not isinstance(value, ReactiveProperty) and not name.startswith("_"):
+                    value = ReactiveProperty(value, name)
+                return super().__setattr__(name, value)
+
+        return AllReactive
+
     def on_change(self, func: Callable[..., None], *args):
         self._on_change_handlers.append((func, [object.__getattribute__(self, arg.name) for arg in args]))
 
@@ -47,4 +60,4 @@ class ReactiveOwner:
             func(*funccalls[func])
 
     def __setattr__(self, name: str, value: Any):
-        self._bulk_update({"name": name, "value": value})
+        return self._bulk_update({"name": name, "value": value})
