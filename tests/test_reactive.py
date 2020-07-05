@@ -99,6 +99,13 @@ class TestReactive(TestCase):
         self.assertEqual(change_handler_1_calls, 1)
         self.assertEqual(change_handler_2_calls, 1)
 
+    def test_6_multiple_instances(self):
+        self.test_class.name = "Bar"
+        self.test_class_2.name = "Foo"
+
+        self.assertEqual(self.test_class.name, "Bar")
+        self.assertEqual(self.test_class_2.name, "Foo")
+
 
 if __name__ == '__main__':
     unittest.main()
