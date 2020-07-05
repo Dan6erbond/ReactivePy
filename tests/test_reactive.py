@@ -1,16 +1,22 @@
+import unittest
 from typing import Any
+from unittest import TestCase
 
 from reactive import ReactiveOwner, ReactiveProperty
 
 
-class TestReactive:
-    def test_change_joined(self):
-        class Foo(ReactiveOwner):
+class TestReactive(TestCase):
+    def setUp(self):
+        class TestClass(ReactiveOwner):
             def __init__(self):
                 super().__init__()
                 self.name = ReactiveProperty("Foo")
                 self.age = ReactiveProperty(6)
 
+        self.test_class = TestClass()
+        self.test_class_2 = TestClass()
+
+    def test_change_joined(self):
         change_name_joined_called = 0
         change_age_joined_called = 0
 
@@ -24,86 +30,56 @@ class TestReactive:
                 elif val.name == "age":
                     change_age_joined_called += 1
 
-        foo = Foo()
+        self.test_class.on_change(call_change_joined, self.test_class.name, self.test_class.age)
 
-        foo.on_change(call_change_joined, foo.name, foo.age)
+        self.test_class.name = "Bar"
+        self.test_class.age = 12
 
-        foo.name = "Bar"
-        foo.age = 12
+        self.test_class.name = "Bar"
+        self.test_class.age = 12
 
-        foo.name = "Bar"
-        foo.age = 12
-
-        assert change_name_joined_called == 1
-        assert change_age_joined_called == 1
+        self.assertEqual(change_name_joined_called, 1)
+        self.assertEqual(change_age_joined_called, 1)
 
     def test_change_any(self):
-        class Foo(ReactiveOwner):
-            def __init__(self):
-                super().__init__()
-                self.name = ReactiveProperty("Foo")
-                self.age = ReactiveProperty(6)
-
         change_any_called = 0
 
         def call_change_any(*args):
             nonlocal change_any_called
             change_any_called += 1
 
-        foo = Foo()
+        self.test_class.on_change(call_change_any)
 
-        foo.on_change(call_change_any)
+        self.test_class.name = "Bar"
+        self.test_class.age = 12
 
-        foo.name = "Bar"
-        foo.age = 12
-
-        assert change_any_called == 2
+        self.assertEqual(change_any_called, 2)
 
     def test_change_unique(self):
-        class Foo(ReactiveOwner):
-            def __init__(self):
-                super().__init__()
-                self.name = ReactiveProperty("Foo")
-
         change_name_unique_called = 0
 
         def call_change_name(curr: Any, prev: Any):
             nonlocal change_name_unique_called
             change_name_unique_called += 1
 
-        foo = Foo()
+        self.test_class.name.on_change(call_change_name)
 
-        foo.name.on_change(call_change_name)
+        self.test_class.name = "Bar"
+        self.test_class.name = "Bar"
 
-        foo.name = "Bar"
-        foo.name = "Bar"
-
-        assert change_name_unique_called == 1
+        self.assertEqual(change_name_unique_called, 1)
 
     def test_bulk_update(self):
-        class Foo(ReactiveOwner):
-            def __init__(self):
-                super().__init__()
-                self.name = ReactiveProperty("Foo")
-                self.age = ReactiveProperty(6)
-
         def call_change_joined(*args):
             names = [arg.name for arg in args]
-            assert ["name", "age"] == names
+            self.assertListEqual(["name", "age"], names)
 
-        foo = Foo()
+        self.test_class.on_change(call_change_joined, self.test_class.name, self.test_class.age)
 
-        foo.on_change(call_change_joined, foo.name, foo.age)
-
-        foo._bulk_update({"name": "name", "value": "Bar"},
-                         {"name": "age", "value": 12})
+        self.test_class._bulk_update({"name": "name", "value": "Bar"},
+                                     {"name": "age", "value": 12})
 
     def test_multiple_property_change_handlers(self):
-        class Foo(ReactiveOwner):
-            def __init__(self):
-                super().__init__()
-                self.name = ReactiveProperty("Foo")
-
         change_handler_1_calls = 0
         change_handler_2_calls = 0
 
@@ -115,12 +91,14 @@ class TestReactive:
             nonlocal change_handler_2_calls
             change_handler_2_calls += 1
 
-        foo = Foo()
+        self.test_class.name.on_change(change_handler_1)
+        self.test_class.name.on_change(change_handler_2)
 
-        foo.name.on_change(change_handler_1)
-        foo.name.on_change(change_handler_2)
+        self.test_class.name = "Bar"
 
-        foo.name = "Bar"
+        self.assertEqual(change_handler_1_calls, 1)
+        self.assertEqual(change_handler_2_calls, 1)
 
-        assert change_handler_1_calls == 1
-        assert change_handler_2_calls == 1
+
+if __name__ == '__main__':
+    unittest.main()
