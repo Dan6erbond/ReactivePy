@@ -10,18 +10,23 @@ class ReactiveProperty:
         self._on_change_handlers = []
 
     def __get__(self, instance: Any, owner: Any):
-        class ObservableProperty(type(self.value)):
-            name = self.name
-            history = self.history
-            on_change = self.on_change
-
-        return ObservableProperty(self.value)
+        if isinstance(self.value, bool):
+            class ObservableBool:
+                value = self.value
+                name = self.name
+                history = self.history
+                on_change = self.on_change
+            return ObservableBool()
+        else:
+            class ObservableProperty(type(self.value)):
+                name = self.name
+                history = self.history
+                on_change = self.on_change
+            return ObservableProperty(self.value)
 
     def __setattr__(self, name: str, value: Any):
         if name == "value":
-            if isinstance(value, bool):
-                raise TypeError("type 'bool' is invalid for the value of 'ReactiveProperty'.")
-            elif callable(value):
+            if callable(value):
                 raise TypeError("type 'function' is invalid for the value of 'ReactiveProperty'.")
             elif value is None:
                 raise TypeError("value of 'ReactiveProperty' cannot be 'None'.")
