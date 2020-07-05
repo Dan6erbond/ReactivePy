@@ -3,6 +3,11 @@ from typing import Any, Callable, Type
 
 class ReactiveProperty:
     def __init__(self, value: Any, name: str = None, field_type: Type[Any] = None):
+        if isinstance(value, bool):
+            raise TypeError("type 'bool' is invalid for the value of 'ReactiveProperty'.")
+        elif value is None:
+            raise TypeError("value of 'ReactiveProperty' cannot be 'None'.")
+
         self.value = value
         self.name = name
         self.history = [value]
@@ -21,6 +26,11 @@ class ReactiveProperty:
         if self._field_type and not isinstance(value, self._field_type):
             raise TypeError(
                 f"expected an instance of type '{self._field_type.__name__}' for attribute '{self.name}', got '{type(value).__name__}' instead")
+
+        if isinstance(value, bool):
+            raise TypeError("type 'bool' is invalid for the value of 'ReactiveProperty'.")
+        elif value is None:
+            raise TypeError("value of 'ReactiveProperty' cannot be 'None'.")
 
         prev = self.value
         self.value = value
