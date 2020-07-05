@@ -12,6 +12,7 @@ class TestReactive(TestCase):
                 super().__init__()
                 self.name = ReactiveProperty("Foo")
                 self.age = ReactiveProperty(6)
+                self.boolean = ReactiveProperty(True)
 
         self.test_class = TestClass()
         self.test_class_2 = TestClass()
@@ -126,6 +127,23 @@ class TestReactive(TestCase):
         all_reactive.attribute = "Test"
         self.assertTrue(hasattr(all_reactive.attribute, "on_change"))
         self.assertFalse(hasattr(all_reactive._on_change_handlers, "on_change"))
+
+    def test_10_reactive_boolean(self):
+        change_boolean_unique_called = 0
+
+        def call_change_boolean(curr: Any, prev: Any):
+            nonlocal change_boolean_unique_called
+            change_boolean_unique_called += 1
+
+        self.test_class.boolean.on_change(call_change_boolean)
+
+        self.test_class.boolean = False
+        self.assertEqual(change_boolean_unique_called, 1)
+
+        self.test_class.boolean = True
+        self.assertEqual(change_boolean_unique_called, 2)
+
+        self.assertTrue(self.test_class.boolean)
 
 
 if __name__ == '__main__':

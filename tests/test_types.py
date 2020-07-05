@@ -22,12 +22,8 @@ class TestTypes(TestCase):
         self.assertEqual(self.test_class.string, "Foo")
 
     def test_3_boolean(self):
-        msg = "type 'bool' is invalid for the value of 'ReactiveProperty'."
-        with self.assertRaises(TypeError, msg=msg):
-            ReactiveProperty(True)
-
         self.test_class.boolean = True
-        self.assertEqual(self.test_class.boolean, True)
+        self.assertTrue(self.test_class.boolean)
 
     def test_4_callable(self):
         def func():
