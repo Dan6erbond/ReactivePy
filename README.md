@@ -50,9 +50,21 @@ Classes using the `ReactiveOwner.all_reactive` decorator do not need to inherit 
 class Foo:
     def __init__(self):
         super().__init__()
-        self.name = ReactiveProperty("Foo", field_type=str)
+        self.name = "Foo"
 ```
 
-## Known Issues
+### Using Type `bool`
 
- - `class ReactiveProperty` does not work for type `bool` and `NoneType`.
+Since the type `bool` cannot be used as a base class, when retrieving its value, users must explicitly use `ReactiveProperty.value` attribute:
+
+```python
+class Foo:
+    def __init__(self):
+        super().__init__()
+        self.boolean = ReactiveProperty(True)
+
+foo = Foo()
+print(foo.boolean.value)
+
+# >>> True
+```
