@@ -39,7 +39,7 @@ class Foo(ReactiveOwner):
         self.name = ReactiveProperty("Foo", field_type=str)
 ```
 
-### `all_reactive` decorator
+### `all_reactive` Decorator
 
 The `ReactiveOwner.all_reactive` owner can be used on classes, where all public attributes should be reactive, which will additionally override the `__setattr__` method to convert any attribute writes.
 
