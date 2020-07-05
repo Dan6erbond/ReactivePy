@@ -106,6 +106,13 @@ class TestReactive(TestCase):
         self.assertEqual(self.test_class.name, "Bar")
         self.assertEqual(self.test_class_2.name, "Foo")
 
+    def test_7_field_type(self):
+        self.test_class.attribute = ReactiveProperty(True, field_type=bool)
+
+        msg = "expected an instance of type 'bool' for attribute 'attribute', got 'int' instead"
+        with self.assertRaises(TypeError, msg=msg):
+            self.test_class.attribute = 12
+
 
 if __name__ == '__main__':
     unittest.main()
