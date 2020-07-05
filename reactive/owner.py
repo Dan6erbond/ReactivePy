@@ -15,7 +15,10 @@ class ReactiveOwner:
 
             def __setattr__(self, name: str, value: Any):
                 if not isinstance(value, ReactiveProperty) and not name.startswith("_"):
-                    value = ReactiveProperty(value, name)
+                    try:
+                        value = ReactiveProperty(value, name)
+                    except TypeError:
+                        pass
                 return super().__setattr__(name, value)
 
         return AllReactive
