@@ -107,11 +107,11 @@ class TestReactive(TestCase):
         self.assertEqual(self.test_class_2.name, "Foo")
 
     def test_7_field_type(self):
-        self.test_class.attribute = ReactiveProperty(True, field_type=bool)
+        self.test_class.attribute = ReactiveProperty(12, field_type=int)
 
-        msg = "expected an instance of type 'bool' for attribute 'attribute', got 'int' instead"
+        msg = "expected an instance of type 'int' for attribute 'attribute', got 'str' instead"
         with self.assertRaises(TypeError, msg=msg):
-            self.test_class.attribute = 12
+            self.test_class.attribute = "12"
 
     def test_8_setattr(self):
         setattr(self.test_class, "attribute", ReactiveProperty("Foo"))
