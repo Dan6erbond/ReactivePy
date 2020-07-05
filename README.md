@@ -29,3 +29,12 @@ foo.name.on_change(on_name_update)
 foo._bulk_update({"name": "name", "value": "Bar"},
                   {"name": "age", "value": 12})
 ```
+
+Reactive properties can also be strong-typed raising a `TypeError` if the value they're being set to doesn't match the `field_type` defined in the constructor. Strong-typing a property looks like this:
+
+```python
+class Foo(ReactiveOwner):
+    def __init__(self):
+        super().__init__()
+        self.name = ReactiveProperty("Foo", field_type=str)
+```
