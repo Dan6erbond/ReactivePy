@@ -140,3 +140,6 @@ cython_debug/
 # IDE/editor files
 .vscode/
 .idea/
+
+# Custom
+/setup.bat
