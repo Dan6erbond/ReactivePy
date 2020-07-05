@@ -5,6 +5,8 @@ class ReactiveProperty:
     def __init__(self, value: Any, name: str = None, field_type: Type[Any] = None):
         if isinstance(value, bool):
             raise TypeError("type 'bool' is invalid for the value of 'ReactiveProperty'.")
+        elif callable(value):
+            raise TypeError("type 'function' is invalid for the value of 'ReactiveProperty'.")
         elif value is None:
             raise TypeError("value of 'ReactiveProperty' cannot be 'None'.")
 
@@ -29,6 +31,8 @@ class ReactiveProperty:
 
         if isinstance(value, bool):
             raise TypeError("type 'bool' is invalid for the value of 'ReactiveProperty'.")
+        elif callable(value):
+            raise TypeError("type 'function' is invalid for the value of 'ReactiveProperty'.")
         elif value is None:
             raise TypeError("value of 'ReactiveProperty' cannot be 'None'.")
 
