@@ -117,6 +117,16 @@ class TestReactive(TestCase):
         setattr(self.test_class, "attribute", ReactiveProperty("Foo"))
         self.assertEqual(self.test_class.attribute, "Foo")
 
+    def test_9_all_reactive(self):
+        @ReactiveOwner.all_reactive
+        class AllReactiveTestClass:
+            pass
+
+        all_reactive = AllReactiveTestClass()
+        all_reactive.attribute = "Test"
+        self.assertTrue(hasattr(all_reactive.attribute, "on_change"))
+        self.assertFalse(hasattr(all_reactive._on_change_handlers, "on_change"))
+
 
 if __name__ == '__main__':
     unittest.main()
