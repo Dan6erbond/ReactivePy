@@ -53,6 +53,8 @@ class Foo:
         self.name = "Foo"
 ```
 
+Additionally the parameters `only_type` and `not_type` can be specified, as a single type, list or tuple of types which will have only those types converted to `class ReactiveProperty` or not.
+
 ### Using Type `bool`
 
 Since the type `bool` cannot be used as a base class, when retrieving its value, users must explicitly use `ReactiveProperty.value` attribute:
