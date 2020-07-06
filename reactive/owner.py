@@ -17,6 +17,7 @@ class ReactiveOwner:
         return obj
 
     def _bulk_update(self, *args):
+        changed = False
         funccalls = {}
 
         for arg in args:
@@ -33,6 +34,8 @@ class ReactiveOwner:
                     obj.__set__(self, arg["value"])
 
                     if isinstance(obj, ReactiveProperty):
+                        if prev_value != obj.value:
+                            changed = True
                         for change_handler in self.__on_change_handlers:
                             if prev_value != obj.value and (obj in change_handler[1] or not change_handler[1]):
                                 func = change_handler[0]
@@ -45,6 +48,7 @@ class ReactiveOwner:
 
         for func in funccalls:
             func(*funccalls[func])
+        return changed
 
     def __setattr__(self, name: str, value: Any):
         return self._bulk_update({"name": name, "value": value})
