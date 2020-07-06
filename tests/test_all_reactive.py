@@ -18,8 +18,30 @@ class TestAllReactive(TestCase):
         self.assertTrue(hasattr(all_reactive.attribute, "on_change"))
         self.assertFalse(hasattr(all_reactive._private_attribute, "on_change"))
 
-    def test_1_all_reactive_only_type(self):
+    def test_1_all_reactive_only_type_list(self):
         @reactive.all_reactive(not_type=[bool])
+        class AllReactiveTestClass:
+            pass
+
+        all_reactive = AllReactiveTestClass()
+        all_reactive.attribute_1 = "Test"
+        all_reactive.attribute_2 = True
+        self.assertTrue(hasattr(all_reactive.attribute_1, "on_change"))
+        self.assertFalse(hasattr(all_reactive.attribute_2, "on_change"))
+
+    def test_1_all_reactive_only_type_tuple(self):
+        @reactive.all_reactive(not_type=(bool))
+        class AllReactiveTestClass:
+            pass
+
+        all_reactive = AllReactiveTestClass()
+        all_reactive.attribute_1 = "Test"
+        all_reactive.attribute_2 = True
+        self.assertTrue(hasattr(all_reactive.attribute_1, "on_change"))
+        self.assertFalse(hasattr(all_reactive.attribute_2, "on_change"))
+
+    def test_1_all_reactive_only_type_single_type(self):
+        @reactive.all_reactive(not_type=bool)
         class AllReactiveTestClass:
             pass
 
