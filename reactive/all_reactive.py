@@ -19,6 +19,8 @@ def make_all_reactive(org_cls=None, only_type=None, not_type=None):
     class AllReactive(org_cls, ReactiveOwner):
         def __init__(self):
             super().__init__()
+            self.__doc__ = org_cls.__doc__
+            self.__name__ = org_cls.__name__
             self.__only_type = to_tuple(only_type)
             self.__not_type = to_tuple(not_type)
 
