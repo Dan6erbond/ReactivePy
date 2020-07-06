@@ -3,18 +3,20 @@ from typing import Any, Callable
 from .property import ReactiveProperty
 
 
-class ReactiveOwner:
-    def __init__(self):
-        self._on_change_handlers = []
-
-    @classmethod
-    def all_reactive(cls, org_cls):
+def all_reactive(org_cls=None, only_type=None, not_type=None):
+    if org_cls:
         class AllReactive(org_cls, ReactiveOwner):
             def __init__(self):
                 super().__init__()
+                self._only_type = only_type
+                self._not_type = not_type
 
             def __setattr__(self, name: str, value: Any):
                 if not isinstance(value, ReactiveProperty) and not name.startswith("_"):
+                    if self._only_type and not isinstance(value, self._only_type):
+                        return super().__setattr__(name, value)
+                    if self._not_type and isinstance(value, self._not_type):
+                        return super().__setattr__(name, value)
                     try:
                         value = ReactiveProperty(value, name)
                     except TypeError:
@@ -22,6 +24,34 @@ class ReactiveOwner:
                 return super().__setattr__(name, value)
 
         return AllReactive
+
+    def all_reactive_wrapper(org_cls):
+        class AllReactive(org_cls, ReactiveOwner):
+            def __init__(self):
+                super().__init__()
+                self._only_type = tuple(only_type) if only_type else only_type
+                self._not_type = tuple(not_type) if not_type else not_type
+
+            def __setattr__(self, name: str, value: Any):
+                if not isinstance(value, ReactiveProperty) and not name.startswith("_"):
+                    if self._only_type and not isinstance(value, self._only_type):
+                        return super().__setattr__(name, value)
+                    if self._not_type and isinstance(value, self._not_type):
+                        return super().__setattr__(name, value)
+                    try:
+                        value = ReactiveProperty(value, name)
+                    except TypeError:
+                        pass
+                return super().__setattr__(name, value)
+
+        return AllReactive
+
+    return all_reactive_wrapper
+
+
+class ReactiveOwner:
+    def __init__(self):
+        self._on_change_handlers = []
 
     def on_change(self, func: Callable[..., None], *args):
         self._on_change_handlers.append((func, [object.__getattribute__(self, arg.name) for arg in args]))
