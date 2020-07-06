@@ -46,7 +46,9 @@ The `ReactiveOwner.all_reactive` owner can be used on classes, where all public 
 Classes using the `ReactiveOwner.all_reactive` decorator do not need to inherit from `ReactiveOwner`:
 
 ```python
-@ReactiveOwner.all_reactive
+from reactive import all_reactive
+
+@all_reactive
 class Foo:
     def __init__(self):
         super().__init__()
@@ -60,7 +62,9 @@ Additionally the parameters `only_type` and `not_type` can be specified, as a si
 Since the type `bool` cannot be used as a base class, when retrieving its value, users must explicitly use `ReactiveProperty.value` attribute:
 
 ```python
-class Foo:
+from reactive import ReactiveOwner, ReactiveProperty
+
+class Foo(ReactiveOwner):
     def __init__(self):
         super().__init__()
         self.boolean = ReactiveProperty(True)
