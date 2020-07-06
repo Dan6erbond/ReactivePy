@@ -6,6 +6,7 @@ from reactive import ReactiveOwner, ReactiveProperty
 
 
 class TestReactive(TestCase):
+
     def setUp(self):
         class TestClass(ReactiveOwner):
             def __init__(self):
@@ -118,17 +119,7 @@ class TestReactive(TestCase):
         setattr(self.test_class, "attribute", ReactiveProperty("Foo"))
         self.assertEqual(self.test_class.attribute, "Foo")
 
-    def test_9_all_reactive(self):
-        @ReactiveOwner.all_reactive
-        class AllReactiveTestClass:
-            pass
-
-        all_reactive = AllReactiveTestClass()
-        all_reactive.attribute = "Test"
-        self.assertTrue(hasattr(all_reactive.attribute, "on_change"))
-        self.assertFalse(hasattr(all_reactive._on_change_handlers, "on_change"))
-
-    def test_10_reactive_boolean(self):
+    def test_9_reactive_boolean(self):
         change_boolean_unique_called = 0
 
         def call_change_boolean(curr: Any, prev: Any):

@@ -2,12 +2,13 @@ import unittest
 from typing import Any
 from unittest import TestCase
 
-from reactive import ReactiveOwner, ReactiveProperty
+from reactive import ReactiveOwner, ReactiveProperty, all_reactive
 
 
 class TestTypes(TestCase):
+
     def setUp(self):
-        @ReactiveOwner.all_reactive
+        @all_reactive
         class TestClass:
             pass
 
