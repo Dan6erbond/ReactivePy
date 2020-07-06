@@ -43,13 +43,11 @@ class Foo(ReactiveOwner):
 
 The `ReactiveOwner.all_reactive` owner can be used on classes, where all public attributes should be reactive, which will additionally override the `__setattr__` method to convert any attribute writes.
 
-Classes using the `ReactiveOwner.all_reactive` decorator do not need to inherit from `ReactiveOwner`:
-
 ```python
-from reactive import all_reactive
+from reactive import all_reactive, ReactiveOwner
 
 @all_reactive
-class Foo:
+class Foo(ReactiveOwner):
     def __init__(self):
         super().__init__()
         self.name = "Foo"
