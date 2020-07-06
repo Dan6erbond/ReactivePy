@@ -2,8 +2,8 @@ import unittest
 from typing import Any
 from unittest import TestCase
 
-from reactive import ReactiveOwner
 import reactive
+from reactive import ReactiveOwner
 
 
 class TestAllReactive(TestCase):
@@ -79,6 +79,14 @@ class TestAllReactive(TestCase):
         all_reactive.attribute_2 = True
         self.assertTrue(hasattr(all_reactive.attribute_1, "on_change"))
         self.assertFalse(hasattr(all_reactive.attribute_2, "on_change"))
+
+    def test_8_all_reactive_init(self):
+        @reactive.all_reactive(only_type=[str])
+        class AllReactiveTestClass(ReactiveOwner):
+            def __init__(self, arg1):
+                assert arg1 == "arg1"
+
+        all_reactive = AllReactiveTestClass("arg1")
 
 
 if __name__ == '__main__':

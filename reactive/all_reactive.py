@@ -17,8 +17,8 @@ def to_tuple(val):
 
 def make_all_reactive(org_cls=None, only_type=None, not_type=None):
     class AllReactive(org_cls):
-        def __init__(self):
-            super().__init__()
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
             self.__doc__ = org_cls.__doc__
             self.__name__ = org_cls.__name__
             self.__only_type = to_tuple(only_type)
