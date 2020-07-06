@@ -18,7 +18,24 @@ class TestAllReactive(TestCase):
         self.assertTrue(hasattr(all_reactive.attribute, "on_change"))
         self.assertFalse(hasattr(all_reactive._private_attribute, "on_change"))
 
-    def test_1_all_reactive_only_type_list(self):
+    def test_2_all_reactive_doc(self):
+        @reactive.all_reactive
+        class AllReactiveTestClass:
+            """Test doc."""
+            pass
+
+        all_reactive = AllReactiveTestClass()
+        self.assertEqual(all_reactive.__doc__, "Test doc.")
+
+    def test_3_all_reactive_name(self):
+        @reactive.all_reactive
+        class AllReactiveTestClass:
+            pass
+
+        all_reactive = AllReactiveTestClass()
+        self.assertEqual(all_reactive.__name__, "AllReactiveTestClass")
+
+    def test_4_all_reactive_only_type_list(self):
         @reactive.all_reactive(not_type=[bool])
         class AllReactiveTestClass:
             pass
@@ -29,7 +46,7 @@ class TestAllReactive(TestCase):
         self.assertTrue(hasattr(all_reactive.attribute_1, "on_change"))
         self.assertFalse(hasattr(all_reactive.attribute_2, "on_change"))
 
-    def test_1_all_reactive_only_type_tuple(self):
+    def test_5_all_reactive_only_type_tuple(self):
         @reactive.all_reactive(not_type=(bool))
         class AllReactiveTestClass:
             pass
@@ -40,7 +57,7 @@ class TestAllReactive(TestCase):
         self.assertTrue(hasattr(all_reactive.attribute_1, "on_change"))
         self.assertFalse(hasattr(all_reactive.attribute_2, "on_change"))
 
-    def test_1_all_reactive_only_type_single_type(self):
+    def test_6_all_reactive_only_type_single_type(self):
         @reactive.all_reactive(not_type=bool)
         class AllReactiveTestClass:
             pass
@@ -51,7 +68,7 @@ class TestAllReactive(TestCase):
         self.assertTrue(hasattr(all_reactive.attribute_1, "on_change"))
         self.assertFalse(hasattr(all_reactive.attribute_2, "on_change"))
 
-    def test_1_all_reactive_not_type(self):
+    def test_7_all_reactive_not_type(self):
         @reactive.all_reactive(only_type=[str])
         class AllReactiveTestClass:
             pass
