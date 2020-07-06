@@ -8,14 +8,14 @@ def all_reactive(org_cls=None, only_type=None, not_type=None):
         class AllReactive(org_cls, ReactiveOwner):
             def __init__(self):
                 super().__init__()
-                self._only_type = only_type
-                self._not_type = not_type
+                self.__only_type = only_type
+                self.__not_type = not_type
 
             def __setattr__(self, name: str, value: Any):
                 if not isinstance(value, ReactiveProperty) and not name.startswith("_"):
-                    if self._only_type and not isinstance(value, self._only_type):
+                    if self.__only_type and not isinstance(value, self.__only_type):
                         return super().__setattr__(name, value)
-                    if self._not_type and isinstance(value, self._not_type):
+                    if self.__not_type and isinstance(value, self.__not_type):
                         return super().__setattr__(name, value)
                     try:
                         value = ReactiveProperty(value, name)
@@ -29,14 +29,14 @@ def all_reactive(org_cls=None, only_type=None, not_type=None):
         class AllReactive(org_cls, ReactiveOwner):
             def __init__(self):
                 super().__init__()
-                self._only_type = tuple(only_type) if only_type else only_type
-                self._not_type = tuple(not_type) if not_type else not_type
+                self.__only_type = tuple(only_type) if only_type else only_type
+                self.__not_type = tuple(not_type) if not_type else not_type
 
             def __setattr__(self, name: str, value: Any):
                 if not isinstance(value, ReactiveProperty) and not name.startswith("_"):
-                    if self._only_type and not isinstance(value, self._only_type):
+                    if self.__only_type and not isinstance(value, self.__only_type):
                         return super().__setattr__(name, value)
-                    if self._not_type and isinstance(value, self._not_type):
+                    if self.__not_type and isinstance(value, self.__not_type):
                         return super().__setattr__(name, value)
                     try:
                         value = ReactiveProperty(value, name)
@@ -51,10 +51,10 @@ def all_reactive(org_cls=None, only_type=None, not_type=None):
 
 class ReactiveOwner:
     def __init__(self):
-        self._on_change_handlers = []
+        self.__on_change_handlers = []
 
     def on_change(self, func: Callable[..., None], *args):
-        self._on_change_handlers.append((func, [object.__getattribute__(self, arg.name) for arg in args]))
+        self.__on_change_handlers.append((func, [object.__getattribute__(self, arg.name) for arg in args]))
 
     def __getattribute__(self, name: str):
         obj = object.__getattribute__(self, name)
@@ -79,7 +79,7 @@ class ReactiveOwner:
                     obj.__set__(self, arg["value"])
 
                     if isinstance(obj, ReactiveProperty):
-                        for change_handler in self._on_change_handlers:
+                        for change_handler in self.__on_change_handlers:
                             if prev_value != obj.value and (obj in change_handler[1] or not change_handler[1]):
                                 func = change_handler[0]
                                 if func in funccalls:
