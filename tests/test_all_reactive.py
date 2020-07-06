@@ -2,6 +2,7 @@ import unittest
 from typing import Any
 from unittest import TestCase
 
+from reactive import ReactiveOwner
 import reactive
 
 
@@ -9,7 +10,7 @@ class TestAllReactive(TestCase):
 
     def test_1_all_reactive(self):
         @reactive.all_reactive
-        class AllReactiveTestClass:
+        class AllReactiveTestClass(ReactiveOwner):
             pass
 
         all_reactive = AllReactiveTestClass()
@@ -20,7 +21,7 @@ class TestAllReactive(TestCase):
 
     def test_2_all_reactive_doc(self):
         @reactive.all_reactive
-        class AllReactiveTestClass:
+        class AllReactiveTestClass(ReactiveOwner):
             """Test doc."""
             pass
 
@@ -29,7 +30,7 @@ class TestAllReactive(TestCase):
 
     def test_3_all_reactive_name(self):
         @reactive.all_reactive
-        class AllReactiveTestClass:
+        class AllReactiveTestClass(ReactiveOwner):
             pass
 
         all_reactive = AllReactiveTestClass()
@@ -37,7 +38,7 @@ class TestAllReactive(TestCase):
 
     def test_4_all_reactive_only_type_list(self):
         @reactive.all_reactive(not_type=[bool])
-        class AllReactiveTestClass:
+        class AllReactiveTestClass(ReactiveOwner):
             pass
 
         all_reactive = AllReactiveTestClass()
@@ -48,7 +49,7 @@ class TestAllReactive(TestCase):
 
     def test_5_all_reactive_only_type_tuple(self):
         @reactive.all_reactive(not_type=(bool))
-        class AllReactiveTestClass:
+        class AllReactiveTestClass(ReactiveOwner):
             pass
 
         all_reactive = AllReactiveTestClass()
@@ -59,7 +60,7 @@ class TestAllReactive(TestCase):
 
     def test_6_all_reactive_only_type_single_type(self):
         @reactive.all_reactive(not_type=bool)
-        class AllReactiveTestClass:
+        class AllReactiveTestClass(ReactiveOwner):
             pass
 
         all_reactive = AllReactiveTestClass()
@@ -70,7 +71,7 @@ class TestAllReactive(TestCase):
 
     def test_7_all_reactive_not_type(self):
         @reactive.all_reactive(only_type=[str])
-        class AllReactiveTestClass:
+        class AllReactiveTestClass(ReactiveOwner):
             pass
 
         all_reactive = AllReactiveTestClass()

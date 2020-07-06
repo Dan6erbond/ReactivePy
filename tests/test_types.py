@@ -9,7 +9,7 @@ class TestTypes(TestCase):
 
     def setUp(self):
         @all_reactive
-        class TestClass:
+        class TestClass(ReactiveOwner):
             pass
 
         self.test_class = TestClass()

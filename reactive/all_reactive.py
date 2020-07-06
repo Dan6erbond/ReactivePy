@@ -16,7 +16,7 @@ def to_tuple(val):
 
 
 def make_all_reactive(org_cls=None, only_type=None, not_type=None):
-    class AllReactive(org_cls, ReactiveOwner):
+    class AllReactive(org_cls):
         def __init__(self):
             super().__init__()
             self.__doc__ = org_cls.__doc__
