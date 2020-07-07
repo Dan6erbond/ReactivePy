@@ -1,3 +1,4 @@
+import functools
 from typing import Any
 
 from .owner import ReactiveOwner
@@ -16,26 +17,25 @@ def to_tuple(val):
 
 
 def make_all_reactive(org_cls=None, only_type=None, not_type=None):
-    class AllReactive(org_cls):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            self.__doc__ = org_cls.__doc__
-            self.__name__ = org_cls.__name__
-            self.__only_type = to_tuple(only_type)
-            self.__not_type = to_tuple(not_type)
+    old_setattr = getattr(org_cls, "__setattr__", None)
 
-        def __setattr__(self, name: str, value: Any):
-            if not isinstance(value, ReactiveProperty) and not name.startswith("_"):
-                if self.__only_type and not isinstance(value, self.__only_type):
-                    return super().__setattr__(name, value)
-                if self.__not_type and isinstance(value, self.__not_type):
-                    return super().__setattr__(name, value)
-                try:
-                    value = ReactiveProperty(value, name)
-                except TypeError:
-                    pass
-            return super().__setattr__(name, value)
-    return AllReactive
+    def __setattr__(self, name: str, value: Any):
+        if not isinstance(value, ReactiveProperty) and not name.startswith("_"):
+            if self.__only_type and not isinstance(value, self.__only_type):
+                return old_setattr(self, name, value)
+            if self.__not_type and isinstance(value, self.__not_type):
+                return old_setattr(self, name, value)
+            try:
+                value = ReactiveProperty(value, name)
+            except TypeError:
+                pass
+        return old_setattr(self, name, value)
+
+    org_cls.__only_type = to_tuple(only_type)
+    org_cls.__not_type = to_tuple(not_type)
+    org_cls.__setattr__ = __setattr__
+
+    return org_cls
 
 
 def all_reactive(org_cls=None, only_type=None, not_type=None):
