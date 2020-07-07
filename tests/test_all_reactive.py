@@ -34,7 +34,7 @@ class TestAllReactive(TestCase):
             pass
 
         all_reactive = AllReactiveTestClass()
-        self.assertEqual(all_reactive.__name__, "AllReactiveTestClass")
+        self.assertEqual(all_reactive.__class__.__name__, "AllReactiveTestClass")
 
     def test_4_all_reactive_only_type_list(self):
         @reactive.all_reactive(not_type=[bool])
