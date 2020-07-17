@@ -47,7 +47,6 @@ class ReactiveOwner:
 
         for arg in args:
             res = self.__set_reactive_attr(arg, args[arg])
-            print(res)
             obj, arg_changed = res
             changed = arg_changed or changed
 
