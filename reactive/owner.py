@@ -68,7 +68,7 @@ class ReactiveOwner:
         changed, funccalls = self.__set_reactive_attrs(**args)
 
         for func in funccalls:
-            if asyncio.iscoroutine(func):
+            if asyncio.iscoroutinefunction(func):
                 await func(*funccalls[func])
             else:
                 func(*funccalls[func])
