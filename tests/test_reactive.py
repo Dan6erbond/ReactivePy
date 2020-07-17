@@ -78,9 +78,8 @@ class TestReactive(TestCase):
 
         self.test_class.on_change(call_change_joined, self.test_class.name, self.test_class.age)
 
-        self.assertTrue(self.test_class._bulk_update({"name": "name", "value": "Bar"},
-                                                     {"name": "age", "value": 12}))
-        self.assertFalse(self.test_class._bulk_update({"name": "name", "value": "Bar"}))
+        self.assertTrue(self.test_class._bulk_update(name="Bar", age=12))
+        self.assertFalse(self.test_class._bulk_update(name="Bar"))
 
     def test_5_multiple_property_change_handlers(self):
         change_handler_1_calls = 0
